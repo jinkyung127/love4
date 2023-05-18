@@ -2,15 +2,18 @@ from flask import Flask,render_template,request,jsonify,send_file,make_response
 from gridfs import GridFS
 from pymongo import MongoClient
 
-# 이미지 데이터 변환때문에 넣음
-from io import BytesIO
-import base64
-import io
-
 # mongodb objectID용
 from bson import ObjectId
 
+# 이미지
+import os
+from werkzeug.utils import secure_filename
+
+
 app = Flask(__name__)
+
+# 이미지 담을 경로
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 # mongo db 연결하기
 from pymongo import MongoClient
@@ -18,11 +21,9 @@ from pymongo import MongoClient
 client = MongoClient("mongodb+srv://sparta:test@cluster0.k23feze.mongodb.net/?retryWrites=true&w=majority") # mongo url입력
 db = client["team"]
 
-# def : 이미지 확장자 제한하기
-ALLOWED_EXTENSIONS = {"png"}
-def allowed_file(filename):
-    return "." in filename and \
-           filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+
 
 # route : home화면
 @app.route("/")
@@ -51,22 +52,23 @@ def setPage(member_id):
 
     return render_template("ug.html", member=member)
 
+
 # 팀원db : 팀원 데이터 생성
 @app.route("/members", methods=["POST"])
 def member_post():
-    name_receive = request.form["name_give"]
-    address_receive = request.form["address_give"]
-    hobby_receive = request.form["hobby_give"]
-    advantage_receive = request.form["advantage_give"]
-    work_style_receive = request.form["work_style_give"]
-    comment_receive = request.form["comment_give"]
-    blog_receive = request.form["blog_give"]
-    img_file = request.files["img_give"]
-    
-    if img_file and allowed_file(img_file.filename): #이미지 확장자 확인 함수로 png로 들어왔는지 체크
-        image_binary = img_file.read()  # 이미지 파일을 바이너리로 읽어옴
-        encoded_image = base64.b64encode(image_binary).decode("utf-8")  # 이미지 데이터를 Base64로 인코딩
-            
+    try: 
+        name_receive = request.form["name_give"]
+        address_receive = request.form["address_give"]
+        hobby_receive = request.form["hobby_give"]
+        advantage_receive = request.form["advantage_give"]
+        work_style_receive = request.form["work_style_give"]
+        comment_receive = request.form["comment_give"]
+        blog_receive = request.form["blog_give"]
+        img_file = request.files["img_give"]
+
+        filename = secure_filename(img_file.filename) # 파일 이름 다듬기
+        img_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)) # 업로드 폴더에 저장!
+
         doc = {
             "name": name_receive,
             "address": address_receive,
@@ -75,16 +77,17 @@ def member_post():
             "work_style": work_style_receive,
             "comment": comment_receive,
             "blog": blog_receive,
-            "img": encoded_image  # Base64로 인코딩된 이미지 데이터 저장
+            "img": filename  # 이미지 파일명 저장
         } 
+        
         db.members.insert_one(doc)
-                 
+
         return jsonify({"msg": "팀원 등록 완료"}), 201
-    else:
-        if img_file is None or not allowed_file(img_file.filename):
-            return jsonify({"msg": ".png 형식의 이미지를 넣어주세요!"}), 400
-        else:
-            return jsonify({"msg": "팀원 등록 실패"}), 500
+
+    except Exception as err:
+        error_message = str(err)
+        return jsonify({"msg": f"팀원 등록 실패: {error_message}"}), 500
+    
            
 # 팀원db : 팀원 데이터 가져오기
 @app.route("/members", methods=["GET"])
@@ -97,62 +100,46 @@ def member_get():
             # _id 필드의 ObjectId 값을 문자열로 변환하여 가져오기 !!!
             member["_id"] = str(member["_id"])
             
-            # 이미지 가져오기
-            image_data = member.get("img", None)
-            if image_data:
-                member["img"] = image_data
+             # 이미지 경로 가져오기
+            image_filename = member.get("img")
+            
+            if image_filename:
+                member["img"] = f"/uploads/{image_filename}"  # 이미지 경로 설정
+            
                         
         return jsonify({"result": all_members}), 200
     
     except Exception as err:
         return jsonify({"msg": "팀원 데이터 Fetch 에러"}), 500
 
-# route : 바이너리 형식 이미지 파일 변환 후 저장하기
-@app.route("/members/<member_id>/image")
-def get_image(member_id):
-    try:
-        member = db.members.find_one({"_id": ObjectId(member_id)}, {"img": True})
-
-        if not member or "img" not in member:
-            return "이미지를 찾을 수 없음", 404
-
-        image_data = member["img"]
-        padding = len(image_data) % 4
-        image_data += "=" * padding
-        image_bytes = base64.b64decode(image_data.encode("utf-8"))
-
-        image = io.BytesIO(image_bytes)
-        image.seek(0)
-
-        return send_file(
-            image,
-            mimetype="image/png",
-            as_attachment=False
-        )
-        
-    except Exception as err:
-        return "서버 오류", 500
-
-# 팀원db : 팀원 데이터 수정하기
+# 팀원db: 팀원 데이터 수정하기
 @app.route("/members/<member_id>", methods=["PUT"])
 def member_edit(member_id):
     try:
         update_data = request.form.to_dict()
-        
-        if "img" in request.files and allowed_file(request.files["img"].filename):
-            img_file = request.files["img"]
-            image_binary = img_file.read()
-            encoded_image = base64.b64encode(image_binary).decode("utf-8")
-            update_data["img"] = encoded_image
-        
+
+        # 이미지 관련 코드
+        img_file = request.files["img"]
+        filename = secure_filename(img_file.filename) # 파일 이름 다듬기
+        img_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)) 
+
+        update_data["img"] = filename  # 이미지 파일명 저장
+
+        # 기존 이미지 파일 삭제
+        member = db.members.find_one({"_id": ObjectId(member_id)})
+        old_filename = member.get("img")
+        if old_filename:
+            old_file_path = os.path.join(app.config['UPLOAD_FOLDER'], old_filename)
+            if os.path.exists(old_file_path):
+                os.remove(old_file_path)
+
         db.members.update_one({"_id": ObjectId(member_id)}, {"$set": update_data})
-        
-        # print(update_data)
-        
+
         return jsonify({"message": f"{member_id}번 팀원 수정 성공"}), 200
 
     except Exception as err:
         return jsonify({"message": f"{member_id}번 팀원 수정 실패"}), 500
+
 
 # 팀원db : 팀원 데이터 삭제하기
 @app.route("/members/<member_id>", methods=["DELETE"])
@@ -225,4 +212,5 @@ def comments_delete(comment_id):
         return jsonify({"msg": f"{comment_id} 방명록 등록 실패"}), 500
 
 if __name__ == "__main__":
-    app.run("0.0.0.0", port=5000, debug=True)
+    # app.run("0.0.0.0", port=5000, debug=True)
+    app.run()

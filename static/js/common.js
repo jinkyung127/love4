@@ -44,11 +44,9 @@ getMember()
             let member_html_temp = ``;
 
             if (member._id === pathValue) {
-                const imgURL = `${url}/image`;
-                console.log(imgURL);
                 member_html_temp = `
                                 <div class="main-img-wrap">
-                                    <img src="${imgURL}" alt="" />
+                                    <img src="/static/${member.img}" alt="" />
                                 </div>
                                 <div class="info-text">
                                     <h2 class="name">${member.name}</h2>
@@ -79,7 +77,7 @@ async function saveMember() {
     const memberComment = document.querySelector("#memberComment").value;
     const memberBlog = document.querySelector("#memberBlog").value;
     const memberImg = document.querySelector("#memberImg").files[0];
-    // console.log(memberImg);
+    console.log(memberImg);
 
     const formData = new FormData();
     formData.append("name_give", memberName);
@@ -91,14 +89,14 @@ async function saveMember() {
     formData.append("blog_give", memberBlog);
     formData.append("img_give", memberImg);
 
+
+
     try {
         const response = await fetch("/members", { method: "POST", body: formData });
 
         if (!response.ok) {
             const data = await response.json();
             const errorMessage = data.msg;
-
-            alert(errorMessage);
 
             throw new Error(errorMessage);
         }
@@ -160,6 +158,8 @@ function editComplete() {
     formData.append("work_style", memberWorkStyleEdit.value);
     formData.append("comment", memberCommentEdit.value);
     formData.append("blog", memberBlogEdit.value);
+
+    console.log(memberImgEdit.files[0])
 
     if (memberImgEdit !== null && memberImgEdit.files.length > 0) {
         formData.append("img", memberImgEdit.files[0]);
