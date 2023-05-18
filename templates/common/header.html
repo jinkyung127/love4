@@ -1,0 +1,120 @@
+<!-- Modal : 팀원 등록 -->
+<div class="modal fade" id="memberAddModal" tabindex="-1" aria-labelledby="memberAddModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">팀원을 등록해주세요!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 인풋 -->
+                <div class="mb-3">
+                    <label for="" class="form-label">이름</label>
+                    <input type="text" class="form-control" id="memberName" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">사는곳</label>
+                    <input type="text" class="form-control" id="memberAddress" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">취미</label>
+                    <input type="text" class="form-control" id="memberHobby" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">장점</label>
+                    <input type="text" class="form-control" id="memberAdvantage" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">협업 스타일</label>
+                    <input type="text" class="form-control" id="memberWorkStyle" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">다짐 한마디</label>
+                    <input type="text" class="form-control" id="memberComment" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">블로그 URL</label>
+                    <input type="text" class="form-control" id="memberBlog" />
+                </div>
+                <div>
+                    <label for="formFile" class="form-label">등록 사진</label>
+                    <input class="form-control" type="file" id="memberImg" />
+                </div>
+                *png 파일만 가능합니다.😅
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onClick="saveMember()">등록하기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal : 팀원 수정 -->
+<div class="modal fade" id="memberEditModal" tabindex="-1" aria-labelledby="memberEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">팀원정보를 수정해주세요!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 인풋 -->
+                <div class="mb-3">
+                    <label for="" class="form-label">이름</label>
+                    <input type="text" class="form-control" id="memberNameEdit" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">사는곳</label>
+                    <input type="text" class="form-control" id="memberAddressEdit" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">취미</label>
+                    <input type="text" class="form-control" id="memberHobbyEdit" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">장점</label>
+                    <input type="text" class="form-control" id="memberAdvantageEdit" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">협업 스타일</label>
+                    <input type="text" class="form-control" id="memberWorkStyleEdit" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">다짐 한마디</label>
+                    <input type="text" class="form-control" id="memberCommentEdit" />
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">블로그 URL</label>
+                    <input type="text" class="form-control" id="memberBlogEdit" />
+                </div>
+                <div>
+                    <label for="formFile" class="form-label">등록 사진</label>
+                    <input class="form-control" type="file" id="memberImgEdit" />
+                </div>
+                * 사진수정을 원하시면 .png 사진파일을 첨부해주세요! 💫
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onClick="editComplete()">수정하기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<header class="header">
+    <div class="inner">
+        <div class="header-top">
+            <h1>4조 4랑해</h1>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#memberAddModal">팀원 등록하기</button>
+        </div>
+        <nav>
+            <ul class="nav-list">
+                <li>
+                    <a href="/" class="btn btn-secondary">팀소개</a>
+                </li>
+                <!-- 팀원별 버튼생성되는 곳 -->
+            </ul>
+        </nav>
+    </div>
+</header>

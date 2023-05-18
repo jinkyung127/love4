@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>4조 4랑해</title>
+
+        <!-- 부트스트랩 -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous"
+        />
+        <!-- 제이쿼리 -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"
+        ></script>
+
+        <!-- css -->
+        <link href="{{ url_for('static', filename='css/common.css') }}" rel="stylesheet" />
+
+        <!-- 폰트 -->
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet" />
+        <style>
+            .main-img-wrap {
+                width: 600px;
+                height: 600px;
+            }
+            .main {
+                align-items: center;
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- header -->
+        {% include 'common/header.html' %}
+
+        <!-- main -->
+        <main class="main inner">
+            <div class="d-flex gap-5">
+                <div class="main-img-wrap">
+                    <!-- 이미지 설정 아직 --!!!! -->
+                    <img src="https://i.postimg.cc/MTjqLLgQ/we.png" alt="" />
+                </div>
+                <div class="info-text">
+                    <h1>4조 4랑해..</h1>
+                    <p>MBTI -TP 로 이루어진 팀입니다. 하지만 계획적으로 잘 해보겠습니다.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- footer -->
+        {% include 'common/footer.html' %}
+
+        <script src="{{ url_for('static',filename='js/common.js') }}"></script>
+    </body>
+</html>
